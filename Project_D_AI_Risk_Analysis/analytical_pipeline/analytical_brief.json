@@ -1,0 +1,498 @@
+{
+  "report_metadata": {
+    "generated_at": "2026-05-21T11:33:14",
+    "report_type": "Weekly Risk Brief",
+    "observation_window": {
+      "start": "2026-04-01",
+      "end": "2026-04-30",
+      "days": 30
+    },
+    "data_source": "Project_A_Dashboard/sample_data/mydata_sample.xlsx",
+    "anonymization": "Wallets mapped to P1..P{n} via sorted deterministic map (see Documentation/methodology.md \u00a77)."
+  },
+  "data_quality": {
+    "fields_present": [
+      "bet_id",
+      "bettor",
+      "bet_time",
+      "sports",
+      "league",
+      "market",
+      "usd_amount",
+      "usd_ggr",
+      "odds",
+      "resolved_odds",
+      "subbet_result",
+      "bet_type"
+    ],
+    "fields_missing_in_source": [],
+    "benchmark_fields_not_captured": [
+      "closing_odds",
+      "pinnacle_odds",
+      "bet365_odds",
+      "ip_address",
+      "device_id",
+      "cashout_offered",
+      "cashout_amount",
+      "bonus_flag",
+      "bonus_amount"
+    ],
+    "bet_status_distribution": {
+      "won": 5065,
+      "lost": 4734,
+      "cancelled": 113,
+      "cashout": 88
+    },
+    "impact_on_analysis": [
+      "No CLV calculation possible \u2014 Pinnacle/closing odds not captured.",
+      "No multi-account linkage via IP/device \u2014 relies on behavioral fingerprinting only.",
+      "No cashout impact analysis \u2014 cashout fields absent.",
+      "No bonus abuse detection \u2014 promotion flags absent."
+    ]
+  },
+  "kpi_overview": {
+    "total_bets": 10000,
+    "settled_bets": 9799,
+    "unique_players": 499,
+    "turnover_usd": 209159.65,
+    "company_ggr_usd": -3870.67,
+    "player_pl_usd": 3870.67,
+    "hold_pct": -1.85,
+    "player_win_rate_pct": 51.69,
+    "avg_won_odds": 1.9,
+    "avg_stake_usd": 21.34,
+    "interpretation_notes": [
+      "Hold % of -1.85% is below industry-healthy 3-7% range.",
+      "Avg won-odds 1.90 computed correctly per methodology \u00a72 (won bets only, +1 adjustment)."
+    ]
+  },
+  "player_risk": {
+    "top_winners_overall": [
+      {
+        "bettor": "P32",
+        "bets": 5,
+        "stake": 1467.0,
+        "player_profit": 1347.04,
+        "roi_pct": 91.82,
+        "win_rate_pct": 100.0,
+        "confidence": "Low (1-20 bets)"
+      },
+      {
+        "bettor": "P22",
+        "bets": 3,
+        "stake": 711.51,
+        "player_profit": 1294.2,
+        "roi_pct": 181.89,
+        "win_rate_pct": 100.0,
+        "confidence": "Low (1-20 bets)"
+      },
+      {
+        "bettor": "P213",
+        "bets": 6,
+        "stake": 561.28,
+        "player_profit": 1240.51,
+        "roi_pct": 221.01,
+        "win_rate_pct": 66.67,
+        "confidence": "Low (1-20 bets)"
+      },
+      {
+        "bettor": "P29",
+        "bets": 6,
+        "stake": 2114.93,
+        "player_profit": 826.14,
+        "roi_pct": 39.06,
+        "win_rate_pct": 83.33,
+        "confidence": "Low (1-20 bets)"
+      },
+      {
+        "bettor": "P15",
+        "bets": 104,
+        "stake": 2844.87,
+        "player_profit": 779.05,
+        "roi_pct": 27.38,
+        "win_rate_pct": 61.54,
+        "confidence": "Stronger evidence (101-500 bets)"
+      },
+      {
+        "bettor": "P30",
+        "bets": 2,
+        "stake": 701.79,
+        "player_profit": 776.8,
+        "roi_pct": 110.69,
+        "win_rate_pct": 100.0,
+        "confidence": "Low (1-20 bets)"
+      },
+      {
+        "bettor": "P391",
+        "bets": 19,
+        "stake": 723.45,
+        "player_profit": 770.58,
+        "roi_pct": 106.51,
+        "win_rate_pct": 63.16,
+        "confidence": "Low (1-20 bets)"
+      },
+      {
+        "bettor": "P3",
+        "bets": 112,
+        "stake": 3100.84,
+        "player_profit": 581.13,
+        "roi_pct": 18.74,
+        "win_rate_pct": 58.04,
+        "confidence": "Stronger evidence (101-500 bets)"
+      },
+      {
+        "bettor": "P18",
+        "bets": 102,
+        "stake": 2748.71,
+        "player_profit": 521.84,
+        "roi_pct": 18.98,
+        "win_rate_pct": 57.84,
+        "confidence": "Stronger evidence (101-500 bets)"
+      },
+      {
+        "bettor": "P21",
+        "bets": 1,
+        "stake": 169.38,
+        "player_profit": 457.33,
+        "roi_pct": 270.0,
+        "win_rate_pct": 100.0,
+        "confidence": "Low (1-20 bets)"
+      }
+    ],
+    "low_volume_sharp_candidates_count": 174,
+    "low_volume_sharp_candidates_total_profit": 22043.75,
+    "low_volume_sharp_candidates_top10": [
+      {
+        "bettor": "P32",
+        "bets": 5,
+        "stake": 1467.0,
+        "player_profit": 1347.04,
+        "roi_pct": 91.82,
+        "win_rate_pct": 100.0,
+        "confidence": "Low (1-20 bets)"
+      },
+      {
+        "bettor": "P22",
+        "bets": 3,
+        "stake": 711.51,
+        "player_profit": 1294.2,
+        "roi_pct": 181.89,
+        "win_rate_pct": 100.0,
+        "confidence": "Low (1-20 bets)"
+      },
+      {
+        "bettor": "P213",
+        "bets": 6,
+        "stake": 561.28,
+        "player_profit": 1240.51,
+        "roi_pct": 221.01,
+        "win_rate_pct": 66.67,
+        "confidence": "Low (1-20 bets)"
+      },
+      {
+        "bettor": "P29",
+        "bets": 6,
+        "stake": 2114.93,
+        "player_profit": 826.14,
+        "roi_pct": 39.06,
+        "win_rate_pct": 83.33,
+        "confidence": "Low (1-20 bets)"
+      },
+      {
+        "bettor": "P30",
+        "bets": 2,
+        "stake": 701.79,
+        "player_profit": 776.8,
+        "roi_pct": 110.69,
+        "win_rate_pct": 100.0,
+        "confidence": "Low (1-20 bets)"
+      },
+      {
+        "bettor": "P391",
+        "bets": 19,
+        "stake": 723.45,
+        "player_profit": 770.58,
+        "roi_pct": 106.51,
+        "win_rate_pct": 63.16,
+        "confidence": "Low (1-20 bets)"
+      },
+      {
+        "bettor": "P21",
+        "bets": 1,
+        "stake": 169.38,
+        "player_profit": 457.33,
+        "roi_pct": 270.0,
+        "win_rate_pct": 100.0,
+        "confidence": "Low (1-20 bets)"
+      },
+      {
+        "bettor": "P33",
+        "bets": 3,
+        "stake": 536.17,
+        "player_profit": 413.44,
+        "roi_pct": 77.11,
+        "win_rate_pct": 33.33,
+        "confidence": "Low (1-20 bets)"
+      },
+      {
+        "bettor": "P315",
+        "bets": 14,
+        "stake": 324.51,
+        "player_profit": 409.18,
+        "roi_pct": 126.09,
+        "win_rate_pct": 71.43,
+        "confidence": "Low (1-20 bets)"
+      },
+      {
+        "bettor": "P237",
+        "bets": 16,
+        "stake": 447.3,
+        "player_profit": 398.69,
+        "roi_pct": 89.13,
+        "win_rate_pct": 62.5,
+        "confidence": "Low (1-20 bets)"
+      }
+    ],
+    "sample_size_warning": "Of 174 flagged 'sharp candidates', 27 have \u226410 bets \u2014 indistinguishable from variance without CLV data."
+  },
+  "market_risk": {
+    "by_sport_top5_losses": [
+      {
+        "dimension": "Football",
+        "bets": 3830,
+        "stake": 81233.95,
+        "ggr": -4714.45,
+        "hold_pct": -5.8,
+        "win_rate_pct": 53.66,
+        "confidence": "Reliable pattern (500+ bets)"
+      },
+      {
+        "dimension": "Counter-Strike 2",
+        "bets": 1049,
+        "stake": 24318.25,
+        "ggr": -2188.47,
+        "hold_pct": -9.0,
+        "win_rate_pct": 50.24,
+        "confidence": "Reliable pattern (500+ bets)"
+      },
+      {
+        "dimension": "Ice Hockey",
+        "bets": 385,
+        "stake": 7762.7,
+        "ggr": -172.1,
+        "hold_pct": -2.22,
+        "win_rate_pct": 50.39,
+        "confidence": "Stronger evidence (101-500 bets)"
+      },
+      {
+        "dimension": "Volleyball",
+        "bets": 482,
+        "stake": 11369.69,
+        "ggr": -100.6,
+        "hold_pct": -0.88,
+        "win_rate_pct": 49.59,
+        "confidence": "Stronger evidence (101-500 bets)"
+      },
+      {
+        "dimension": "Basketball",
+        "bets": 1509,
+        "stake": 30777.81,
+        "ggr": -55.27,
+        "hold_pct": -0.18,
+        "win_rate_pct": 50.5,
+        "confidence": "Reliable pattern (500+ bets)"
+      }
+    ],
+    "by_league_top5_losses": [
+      {
+        "dimension": "Champions League",
+        "bets": 469,
+        "stake": 9345.38,
+        "ggr": -3418.54,
+        "hold_pct": -36.58,
+        "win_rate_pct": 69.3,
+        "confidence": "Stronger evidence (101-500 bets)"
+      },
+      {
+        "dimension": "IEM",
+        "bets": 382,
+        "stake": 9142.54,
+        "ggr": -2049.67,
+        "hold_pct": -22.42,
+        "win_rate_pct": 53.66,
+        "confidence": "Stronger evidence (101-500 bets)"
+      },
+      {
+        "dimension": "FIVB",
+        "bets": 170,
+        "stake": 4177.25,
+        "ggr": -1510.67,
+        "hold_pct": -36.16,
+        "win_rate_pct": 52.35,
+        "confidence": "Stronger evidence (101-500 bets)"
+      },
+      {
+        "dimension": "MLS",
+        "bets": 472,
+        "stake": 10203.95,
+        "ggr": -1487.25,
+        "hold_pct": -14.58,
+        "win_rate_pct": 52.75,
+        "confidence": "Stronger evidence (101-500 bets)"
+      },
+      {
+        "dimension": "Ligue 1",
+        "bets": 484,
+        "stake": 10521.54,
+        "ggr": -1375.12,
+        "hold_pct": -13.07,
+        "win_rate_pct": 53.72,
+        "confidence": "Stronger evidence (101-500 bets)"
+      }
+    ],
+    "by_market_top5_losses": [
+      {
+        "dimension": "Full time result",
+        "bets": 1202,
+        "stake": 24898.66,
+        "ggr": -1921.84,
+        "hold_pct": -7.72,
+        "win_rate_pct": 51.83,
+        "confidence": "Reliable pattern (500+ bets)"
+      },
+      {
+        "dimension": "Player props",
+        "bets": 1180,
+        "stake": 25088.76,
+        "ggr": -1373.17,
+        "hold_pct": -5.47,
+        "win_rate_pct": 51.61,
+        "confidence": "Reliable pattern (500+ bets)"
+      },
+      {
+        "dimension": "First Half result",
+        "bets": 1224,
+        "stake": 26290.3,
+        "ggr": -1069.88,
+        "hold_pct": -4.07,
+        "win_rate_pct": 53.76,
+        "confidence": "Reliable pattern (500+ bets)"
+      },
+      {
+        "dimension": "Total points",
+        "bets": 1229,
+        "stake": 26230.76,
+        "ggr": -726.45,
+        "hold_pct": -2.77,
+        "win_rate_pct": 51.51,
+        "confidence": "Reliable pattern (500+ bets)"
+      },
+      {
+        "dimension": "Over/Under 2.5",
+        "bets": 1225,
+        "stake": 25900.63,
+        "ggr": -542.87,
+        "hold_pct": -2.1,
+        "win_rate_pct": 51.43,
+        "confidence": "Reliable pattern (500+ bets)"
+      }
+    ],
+    "champions_league_anomaly": {
+      "win_rate_pct": 69.3,
+      "settled_bets": 469,
+      "wins": 325,
+      "wilson_95ci_pct": [
+        64.98,
+        73.3
+      ],
+      "interpretation": "Anomalous if CI lower bound exceeds 55% AND sample > 200. Current sample: 469, CI lower: 65.0% \u2014 meets threshold."
+    }
+  },
+  "behavioral_fingerprinting": {
+    "same_second_bot_suspect_accounts": 20,
+    "same_second_bot_suspect_ids": [
+      "P1",
+      "P10",
+      "P11",
+      "P12",
+      "P13",
+      "P14",
+      "P15",
+      "P16",
+      "P17",
+      "P18",
+      "P19",
+      "P2",
+      "P20",
+      "P3",
+      "P4",
+      "P5",
+      "P6",
+      "P7",
+      "P8",
+      "P9"
+    ],
+    "behavioral_match_pair_count": 0,
+    "behavioral_cluster_count": 0,
+    "notes": [
+      "Same-second placement: 2+ bets in same one-second window. Strong scripted signal.",
+      "Behavioral clusters: shared sport-mix + time-of-day. Statistical signal only; requires manual review before action."
+    ]
+  },
+  "confidence_and_evidence": [
+    {
+      "finding": "Bot suspects (same-second placement)",
+      "metric": "20 accounts",
+      "evidence_strength": "Strong",
+      "confidence": "High",
+      "notes": "Direct timestamp signal. Manual review needed before account action."
+    },
+    {
+      "finding": "Low-volume sharp winners (\u226420 bets, profitable)",
+      "metric": "174 accounts \u00b7 $22,044 house loss",
+      "evidence_strength": "Weak (small sample per account)",
+      "confidence": "Low",
+      "notes": "Indistinguishable from variance without CLV data. Recommend monitoring, NOT restriction."
+    },
+    {
+      "finding": "Champions League player win rate",
+      "metric": "69.3% (325/469, 95% CI: 65.0\u201373.3%)",
+      "evidence_strength": "Moderate",
+      "confidence": "Medium",
+      "notes": "Anomalous if CI lower bound is above ~55%. If lower bound includes 50%, treat as variance until larger sample."
+    },
+    {
+      "finding": "Football net house P&L",
+      "metric": "$-4,714",
+      "evidence_strength": "Strong",
+      "confidence": "High",
+      "notes": "Largest single sport \u2014 trader-side margin lever, not account restriction."
+    }
+  ],
+  "recommended_actions": [
+    {
+      "priority": "HIGH",
+      "category": "Bot mitigation",
+      "action": "Apply velocity-based cooldown to 20 flagged accounts. Manual review of placement history within 5 business days.",
+      "evidence_strength": "Strong"
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "Market margin",
+      "action": "Tiered margin review on Football Full-Time-Result markets (tier-1 leagues +0.5%, tier-2 +1.0%). Avoid uniform increase to preserve volume on liquid leagues.",
+      "evidence_strength": "Moderate"
+    },
+    {
+      "priority": "HIGH",
+      "category": "Integrity / pricing",
+      "action": "Manual audit of all winning Champions League tickets in observation window. Cross-check settlement timestamps against event end.",
+      "evidence_strength": "Moderate (Wilson lower bound exceeds 55%)"
+    },
+    {
+      "priority": "LOW",
+      "category": "Sharp watchlist",
+      "action": "Add 174 low-volume winning accounts to passive monitoring list. Do NOT restrict \u2014 sample sizes are insufficient. Re-evaluate at 50 bets.",
+      "evidence_strength": "Weak"
+    }
+  ]
+}
