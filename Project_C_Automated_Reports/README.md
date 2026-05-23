@@ -8,14 +8,14 @@ The dashboard in Project A answers "what's happening right now?" — operator-dr
 
 PDFs are the right format because
 
-- Versioned artefact** — each run is a frozen, time-stamped file. Useful for audit and for week-over-week comparison without re-running the pipeline.
-- No client dependency** — opens anywhere, no Streamlit / Python install needed on the recipient side.
-- Email-attachable** — daily report goes to the risk desk inbox; weekly to management. Same file, different distribution.
+- Versioned artefact — each run is a frozen, time-stamped file. Useful for audit and for week-over-week comparison without re-running the pipeline.
+- No client dependency — opens anywhere, no Streamlit / Python install needed on the recipient side.
+- Email-attachable — daily report goes to the risk desk inbox; weekly to management. Same file, different distribution.
 
 The two reports
 
 | Report | Cadence | Audience | Sections |
-|--------|---------|----------|----------|
+
 | Daily Risk Report | Daily | Risk desk | KPI strip · top-risk players · bot suspects · sport-level breakdown |
 | Weekly Executive Summary | Weekly | Management | Week-over-week trend · loss concentration · top markets · prioritised recommendations |
 
@@ -45,7 +45,7 @@ python daily_report.py
 python weekly_report.py
 
 
-Both scripts write a date-stamped PDF into `sample_output/`. Inputs are the anonymized analysis files produced by Project B; no raw wallet identifiers are read at any point.
+Both scripts write a date-stamped PDF into sample_output. Inputs are the anonymized analysis files produced by Project B; no raw wallet identifiers are read at any point.
 
 Scheduling
 
