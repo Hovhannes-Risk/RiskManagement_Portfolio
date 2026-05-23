@@ -31,10 +31,10 @@ Files
 
 
 Project_C_Automated_Reports
-├── README.md              This file
-├── daily_report.py        Daily Risk Report generator
-├── weekly_report.py       Weekly Executive Summary generator
-└── sample_output          Example PDFs from real runs
+EADME.md              This file
+daily_report.py        Daily Risk Report generator
+weekly_report.py       Weekly Executive Summary generator
+sample_output          Example PDFs from real runs
 
 
 Run locally
