@@ -1,29 +1,80 @@
+from pathlib import Path
+from datetime import datetime
+
 import streamlit as st
 import pandas as pd
-import plotly.express as px
+import plotly.express as px# Navigate to your local repo
+cd C:\Users\7777\RiskManagement_Portfolio
+
+# Check status
+git status
+
+# Copy the new file (replace old one)
+copy "C:\Users\7777\Downloads\risk_dashboard.py" "Project_A_Dashboard\risk_dashboard.py"
+
+# Add changes
+git add Project_A_Dashboard/risk_dashboard.py
+
+# Commit with message
+git commit -m "Fix: Dashboard data validation bug + add docstrings"
+
+# Push to GitHub
+git push origin main
 import plotly.graph_objects as go
-from datetime import datetime
 from fpdf import FPDF
 
 st.set_page_config(page_title="Betting Risk Dashboard", page_icon="⚠️", layout="wide")
 
+# Paths relative to this script — works on any machine
+SCRIPT_DIR = Path(__file__).parent
+DATA_DIR = SCRIPT_DIR / "sample_data"
+
+
 @st.cache_data
+def load_bettor_mapping():
+    """Load anonymization mapping from private file."""
+    try:
+        mapping_df = pd.read_excel(DATA_DIR / "bettor_mapping_PRIVATE.xlsx")
+        return dict(zip(mapping_df["Original_Wallet"], mapping_df["Anonymous_ID"]))
+    except FileNotFoundError:
+        st.warning("⚠️ bettor_mapping_PRIVATE.xlsx not found — bettors will show as-is")
+        return {}
+
+
 @st.cache_data
 def load_data():
     try:
-        bets_df = pd.read_excel(r"C:\Users\7777\python-learning\mydata.xlsx.xlsx", sheet_name="Raw_Data")
+        # Load main betting data
+        bets_df = pd.read_excel(DATA_DIR / "mydata_sample.xlsx", sheet_name="Raw_Data")
         bets_df["bet_datetime"] = pd.to_datetime(bets_df["bet_time"], errors="coerce")
+        
+        # Load anonymization map
+        bettor_map = load_bettor_mapping()
+        
+        # Anonymize bettor column
+        if bettor_map:
+            bets_df["bettor"] = bets_df["bettor"].map(bettor_map).fillna(bets_df["bettor"])
+        
+        # Load risk data (bettor is index)
         try:
-            risk_df = pd.read_excel(r"C:\Users\7777\python-learning\player_risk_scores.xlsx", sheet_name="All_Players")
-        except:
+            risk_df = pd.read_excel(DATA_DIR / "player_risk_scores.xlsx", sheet_name="All_Players")
+            if bettor_map:
+                risk_df.index = risk_df.index.map(lambda x: bettor_map.get(x, x))
+        except FileNotFoundError:
             risk_df = None
+        
+        # Load multi-account data
         try:
-            multi_df = pd.read_excel(r"C:\Users\7777\python-learning\multi_account_detection.xlsx", sheet_name="All_Pairs")
-        except:
+            multi_df = pd.read_excel(DATA_DIR / "multi_account_detection.xlsx", sheet_name="All_Pairs")
+            if bettor_map:
+                multi_df["Account_1"] = multi_df["Account_1"].map(bettor_map).fillna(multi_df["Account_1"])
+                multi_df["Account_2"] = multi_df["Account_2"].map(bettor_map).fillna(multi_df["Account_2"])
+        except FileNotFoundError:
             multi_df = None
+        
         return bets_df, risk_df, multi_df
     except Exception as e:
-        st.error(f"Error: {e}")
+        st.error(f"Error loading data: {e}")
         return None, None, None
 
 
@@ -46,6 +97,7 @@ def color_risk(val):
     }
     return colors.get(val, "")
 
+
 def generate_pdf(filtered_bets, total_ggr, start_date, end_date, risk_df, multi_df):
     pdf = FPDF()
     pdf.add_page()
@@ -55,6 +107,14 @@ def generate_pdf(filtered_bets, total_ggr, start_date, end_date, risk_df, multi_
     pdf.cell(0, 8, f"Period: {start_date} to {end_date}", ln=True, align="C")
     pdf.cell(0, 8, f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}", ln=True, align="C")
     pdf.ln(5)
+    
+    # Confidentiality notice
+    pdf.set_font("Helvetica", "I", 9)
+    pdf.set_text_color(100, 100, 100)
+    pdf.cell(0, 6, "CONFIDENTIAL — Bettor IDs anonymized for data protection", ln=True, align="C")
+    pdf.set_text_color(0, 0, 0)
+    pdf.ln(3)
+    
     if total_ggr < 0:
         pdf.set_font("Helvetica", "B", 12)
         pdf.set_text_color(200, 0, 0)
@@ -90,6 +150,7 @@ def generate_pdf(filtered_bets, total_ggr, start_date, end_date, risk_df, multi_
         pdf.cell(40, 8, f"{row['Bets']:,}", border=1)
         pdf.cell(60, 8, f"${row['GGR']:,.2f}", border=1, ln=True)
     return bytes(pdf.output())
+
 
 bets_df, risk_df, multi_df = load_data()
 if bets_df is None:
@@ -250,7 +311,7 @@ elif page == "🔍 Player Risk":
         risk_levels = ["All"] + list(risk_df["Risk_Level"].unique())
         selected_level = st.selectbox("Filter by Risk Level", risk_levels)
     with col2:
-        search_account = st.text_input("Search Account ID", "")
+        search_account = st.text_input("Search Player ID", "")
     filtered_df = risk_df.copy()
     if selected_level != "All":
         filtered_df = filtered_df[filtered_df["Risk_Level"] == selected_level]
@@ -323,4 +384,4 @@ elif page == "📈 Analytics":
     st.plotly_chart(fig, use_container_width=True)
 
 st.markdown("---")
-st.markdown("**Risk Management Dashboard** | Built with Streamlit")
+st.markdown("**Risk Management Dashboard** | Built with Streamlit | *Bettor IDs anonymized for confidentiality*")
