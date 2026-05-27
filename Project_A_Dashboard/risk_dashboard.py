@@ -73,51 +73,215 @@ def color_risk(val):
 def generate_pdf(filtered_bets, total_ggr, start_date, end_date, risk_df, multi_df):
     pdf = FPDF()
     pdf.add_page()
-    pdf.set_font("Helvetica", "B", 20)
-    pdf.cell(0, 12, "Risk Management Summary Report", ln=True, align="C")
-    pdf.set_font("Helvetica", "", 11)
-    pdf.cell(0, 8, f"Period: {start_date} to {end_date}", ln=True, align="C")
-    pdf.cell(0, 8, f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}", ln=True, align="C")
-    pdf.ln(5)
-    pdf.set_font("Helvetica", "I", 9)
-    pdf.set_text_color(100, 100, 100)
-    pdf.cell(0, 6, "CONFIDENTIAL - Bettor IDs anonymized for data protection", ln=True, align="C")
+    
+    # Colors
+    NAVY = (26, 26, 46)
+    RED = (192, 57, 43)
+    GREEN = (29, 122, 78)
+    AMBER = (180, 83, 9)
+    GRAY = (107, 114, 128)
+    LIGHT = (248, 249, 250)
+    
+    # === HEADER BAR ===
+    pdf.set_fill_color(*NAVY)
+    pdf.rect(0, 0, 210, 28, "F")
+    pdf.set_text_color(255, 255, 255)
+    pdf.set_font("Helvetica", "B", 18)
+    pdf.set_xy(10, 8)
+    pdf.cell(0, 8, "RISK MANAGEMENT REPORT", ln=True)
+    pdf.set_font("Helvetica", "", 10)
+    pdf.set_x(10)
+    pdf.cell(0, 5, f"Period: {start_date} to {end_date}  |  Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}", ln=True)
+    
     pdf.set_text_color(0, 0, 0)
-    pdf.ln(3)
+    pdf.ln(10)
+    
+    # === CONFIDENTIAL BANNER ===
+    pdf.set_fill_color(*LIGHT)
+    pdf.set_y(35)
+    pdf.rect(10, pdf.get_y(), 190, 7, "F")
+    pdf.set_font("Helvetica", "I", 8)
+    pdf.set_text_color(*GRAY)
+    pdf.set_xy(10, pdf.get_y() + 1.5)
+    pdf.cell(0, 4, "  CONFIDENTIAL  -  All bettor IDs anonymized (P1...P12208)  -  Bettor mapping kept private", ln=True)
+    pdf.ln(4)
+    
+    # === ALERTS ===
+    pdf.set_text_color(0, 0, 0)
+    
+    alerts = []
     if total_ggr < 0:
-        pdf.set_font("Helvetica", "B", 12)
-        pdf.set_text_color(200, 0, 0)
-        pdf.cell(0, 8, f"ALERT: House is losing ${abs(total_ggr):,.2f}!", ln=True)
-        pdf.set_text_color(0, 0, 0)
+        alerts.append(("NEGATIVE GGR", f"House is losing ${abs(total_ggr):,.2f}", RED))
     if multi_df is not None:
         critical = len(multi_df[multi_df["Risk_Level"] == "CRITICAL"])
         if critical > 0:
-            pdf.set_text_color(200, 0, 0)
-            pdf.cell(0, 8, f"ALERT: {critical} CRITICAL multi-account pairs!", ln=True)
+            alerts.append(("MULTI-ACCOUNT", f"{critical} CRITICAL suspicious pairs detected", RED))
+    if risk_df is not None:
+        crit_players = len(risk_df[risk_df["Risk_Level"] == "CRITICAL"])
+        if crit_players > 0:
+            alerts.append(("CRITICAL PLAYERS", f"{crit_players} players flagged as CRITICAL risk", RED))
+    
+    if alerts:
+        pdf.set_font("Helvetica", "B", 11)
+        pdf.set_text_color(*NAVY)
+        pdf.cell(0, 8, "ALERTS", ln=True)
+        pdf.set_draw_color(*NAVY)
+        pdf.line(10, pdf.get_y(), 50, pdf.get_y())
+        pdf.ln(3)
+        
+        for title, msg, color in alerts:
+            pdf.set_fill_color(255, 240, 240)
+            pdf.set_draw_color(*color)
+            pdf.set_line_width(0.5)
+            y_start = pdf.get_y()
+            pdf.rect(10, y_start, 190, 10, "DF")
+            pdf.set_xy(13, y_start + 2)
+            pdf.set_font("Helvetica", "B", 10)
+            pdf.set_text_color(*color)
+            pdf.cell(45, 6, f"[!] {title}")
+            pdf.set_font("Helvetica", "", 10)
             pdf.set_text_color(0, 0, 0)
-    pdf.ln(5)
-    pdf.set_font("Helvetica", "B", 14)
-    pdf.cell(0, 10, "Key Metrics", ln=True)
-    pdf.set_font("Helvetica", "", 11)
-    pdf.cell(0, 8, f"Total Bets: {len(filtered_bets):,}", ln=True)
-    pdf.cell(0, 8, f"Total Players: {filtered_bets['bettor'].nunique():,}", ln=True)
-    pdf.cell(0, 8, f"Total GGR: ${total_ggr:,.2f}", ln=True)
-    pdf.cell(0, 8, f"Total Stake: ${filtered_bets['usd_amount'].sum():,.2f}", ln=True)
-    pdf.ln(5)
-    pdf.set_font("Helvetica", "B", 14)
-    pdf.cell(0, 10, "Top 10 Sports by Bets", ln=True)
-    pdf.set_font("Helvetica", "B", 10)
-    pdf.cell(80, 8, "Sport", border=1)
-    pdf.cell(40, 8, "Bets", border=1)
-    pdf.cell(60, 8, "GGR ($)", border=1, ln=True)
+            pdf.cell(0, 6, msg, ln=True)
+            pdf.ln(1)
+        pdf.ln(3)
+    
+    # === KEY METRICS ===
+    pdf.set_font("Helvetica", "B", 11)
+    pdf.set_text_color(*NAVY)
+    pdf.cell(0, 8, "KEY METRICS", ln=True)
+    pdf.set_draw_color(*NAVY)
+    pdf.line(10, pdf.get_y(), 60, pdf.get_y())
+    pdf.ln(4)
+    
+    total_stake = filtered_bets['usd_amount'].sum()
+    hold_pct = (total_ggr / total_stake * 100) if total_stake else 0
+    
+    metrics = [
+        ("TOTAL BETS", f"{len(filtered_bets):,}", (0, 0, 0)),
+        ("TOTAL PLAYERS", f"{filtered_bets['bettor'].nunique():,}", (0, 0, 0)),
+        ("TOTAL STAKE", f"${total_stake:,.0f}", (0, 0, 0)),
+        ("TOTAL GGR", f"${total_ggr:,.0f}", RED if total_ggr < 0 else GREEN),
+        ("HOLD %", f"{hold_pct:+.2f}%", RED if hold_pct < 0 else GREEN),
+        ("AVG BET", f"${(total_stake/max(len(filtered_bets),1)):,.0f}", (0, 0, 0)),
+    ]
+    
+    box_w = 31
+    box_h = 18
+    start_x = 10
+    y = pdf.get_y()
+    
+    for i, (label, value, color) in enumerate(metrics):
+        x = start_x + i * (box_w + 1)
+        pdf.set_fill_color(*LIGHT)
+        pdf.set_draw_color(220, 220, 220)
+        pdf.rect(x, y, box_w, box_h, "DF")
+        pdf.set_xy(x, y + 2)
+        pdf.set_font("Helvetica", "", 7)
+        pdf.set_text_color(*GRAY)
+        pdf.cell(box_w, 4, label, align="C")
+        pdf.set_xy(x, y + 8)
+        pdf.set_font("Helvetica", "B", 11)
+        pdf.set_text_color(*color)
+        pdf.cell(box_w, 6, value, align="C")
+    
+    pdf.set_y(y + box_h + 6)
+    pdf.set_text_color(0, 0, 0)
+    
+    # === SPORT BREAKDOWN ===
+    pdf.set_font("Helvetica", "B", 11)
+    pdf.set_text_color(*NAVY)
+    pdf.cell(0, 8, "TOP SPORTS BY VOLUME", ln=True)
+    pdf.set_draw_color(*NAVY)
+    pdf.line(10, pdf.get_y(), 75, pdf.get_y())
+    pdf.ln(3)
+    
     sport_table = filtered_bets.groupby("sports").agg(
-        Bets=("bet_id", "count"), GGR=("usd_ggr", "sum")
+        Bets=("bet_id", "count"),
+        Stake=("usd_amount", "sum"),
+        GGR=("usd_ggr", "sum")
     ).reset_index().sort_values("Bets", ascending=False).head(10)
-    pdf.set_font("Helvetica", "", 10)
-    for _, row in sport_table.iterrows():
-        pdf.cell(80, 8, str(row["sports"]), border=1)
-        pdf.cell(40, 8, f"{row['Bets']:,}", border=1)
-        pdf.cell(60, 8, f"${row['GGR']:,.2f}", border=1, ln=True)
+    
+    pdf.set_fill_color(*NAVY)
+    pdf.set_text_color(255, 255, 255)
+    pdf.set_font("Helvetica", "B", 9)
+    pdf.cell(60, 7, "  Sport", border=0, fill=True)
+    pdf.cell(35, 7, "Bets", border=0, fill=True, align="R")
+    pdf.cell(50, 7, "Stake ($)", border=0, fill=True, align="R")
+    pdf.cell(45, 7, "GGR ($)  ", border=0, fill=True, align="R", ln=True)
+    
+    pdf.set_text_color(0, 0, 0)
+    pdf.set_font("Helvetica", "", 9)
+    for i, (_, row) in enumerate(sport_table.iterrows()):
+        if i % 2 == 0:
+            pdf.set_fill_color(*LIGHT)
+        else:
+            pdf.set_fill_color(255, 255, 255)
+        pdf.cell(60, 6, f"  {row['sports']}", border=0, fill=True)
+        pdf.cell(35, 6, f"{row['Bets']:,}", border=0, fill=True, align="R")
+        pdf.cell(50, 6, f"${row['Stake']:,.0f}", border=0, fill=True, align="R")
+        ggr_val = row['GGR']
+        if ggr_val < 0:
+            pdf.set_text_color(*RED)
+        else:
+            pdf.set_text_color(*GREEN)
+        pdf.cell(45, 6, f"${ggr_val:,.0f}  ", border=0, fill=True, align="R", ln=True)
+        pdf.set_text_color(0, 0, 0)
+    
+    pdf.ln(5)
+    
+    # === RISK SUMMARY ===
+    if risk_df is not None:
+        pdf.set_font("Helvetica", "B", 11)
+        pdf.set_text_color(*NAVY)
+        pdf.cell(0, 8, "RISK BAND DISTRIBUTION", ln=True)
+        pdf.set_draw_color(*NAVY)
+        pdf.line(10, pdf.get_y(), 80, pdf.get_y())
+        pdf.ln(3)
+        
+        risk_counts = risk_df["Risk_Level"].value_counts()
+        order = ["CRITICAL", "HIGH", "MEDIUM", "LOW", "MINIMAL"]
+        colors_map = {"CRITICAL": RED, "HIGH": (220, 80, 60), "MEDIUM": AMBER, "LOW": GREEN, "MINIMAL": GRAY}
+        
+        pdf.set_fill_color(*NAVY)
+        pdf.set_text_color(255, 255, 255)
+        pdf.set_font("Helvetica", "B", 9)
+        pdf.cell(60, 7, "  Risk Level", border=0, fill=True)
+        pdf.cell(50, 7, "Players", border=0, fill=True, align="R")
+        pdf.cell(80, 7, "% of Total", border=0, fill=True, align="R", ln=True)
+        
+        total_players = len(risk_df)
+        pdf.set_text_color(0, 0, 0)
+        pdf.set_font("Helvetica", "", 9)
+        for i, level in enumerate(order):
+            count = risk_counts.get(level, 0)
+            pct = (count / total_players * 100) if total_players else 0
+            if i % 2 == 0:
+                pdf.set_fill_color(*LIGHT)
+            else:
+                pdf.set_fill_color(255, 255, 255)
+            color = colors_map[level]
+            pdf.set_text_color(*color)
+            pdf.set_font("Helvetica", "B", 9)
+            pdf.cell(60, 6, f"  {level}", border=0, fill=True)
+            pdf.set_text_color(0, 0, 0)
+            pdf.set_font("Helvetica", "", 9)
+            pdf.cell(50, 6, f"{count}", border=0, fill=True, align="R")
+            pdf.cell(80, 6, f"{pct:.1f}%  ", border=0, fill=True, align="R", ln=True)
+    
+    # === FOOTER ===
+    pdf.set_y(280)
+    pdf.set_fill_color(*NAVY)
+    pdf.rect(0, 280, 210, 17, "F")
+    pdf.set_text_color(255, 255, 255)
+    pdf.set_font("Helvetica", "B", 8)
+    pdf.set_xy(10, 283)
+    pdf.cell(0, 4, "Risk Management Portfolio", ln=True)
+    pdf.set_font("Helvetica", "", 7)
+    pdf.set_x(10)
+    pdf.cell(0, 4, "github.com/Hovhannes-Risk/RiskManagement_Portfolio", ln=True)
+    pdf.set_x(10)
+    pdf.cell(0, 4, "CONFIDENTIAL  -  For internal review only", ln=True)
+    
     return bytes(pdf.output())
 
 
