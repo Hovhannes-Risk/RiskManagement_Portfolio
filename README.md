@@ -3,6 +3,11 @@
 **AI-enabled risk analytics for sports betting operations.**
 *Hovhannes Asatryan — 15 years industry experience (Live Trader → Live Manager → Risk Manager)*
 
+## 🚀 Live Demo
+
+[**Open Interactive Risk Dashboard →**](https://riskmanagementportfolio-hkdaavgx3tsjvuzyrutvng.streamlit.app/)
+
+Live deployed Streamlit app showing real-time risk monitoring, ML-based bot detection, and multi-account similarity alerts on 4,138 anonymized betting transactions.
 ---
 
 ## TL;DR
