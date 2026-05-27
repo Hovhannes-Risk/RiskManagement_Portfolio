@@ -3,22 +3,7 @@ from datetime import datetime
 
 import streamlit as st
 import pandas as pd
-import plotly.express as px# Navigate to your local repo
-#cd C:\Users\7777\RiskManagement_Portfolio
-
-# Check status
-
-# Copy the new file (replace old one)
-
-
-# Add changes
-git add Project_A_Dashboard/risk_dashboard.py
-
-# Commit with message
-git commit -m "Fix: Dashboard data validation bug + add docstrings"
-
-# Push to GitHub
-git push origin main
+import plotly.express as px
 import plotly.graph_objects as go
 from fpdf import FPDF
 
@@ -43,26 +28,17 @@ def load_bettor_mapping():
 @st.cache_data
 def load_data():
     try:
-        # Load main betting data
         bets_df = pd.read_excel(DATA_DIR / "mydata_sample.xlsx", sheet_name="Raw_Data")
         bets_df["bet_datetime"] = pd.to_datetime(bets_df["bet_time"], errors="coerce")
-        
-        # Load anonymization map
         bettor_map = load_bettor_mapping()
-        
-        # Anonymize bettor column
         if bettor_map:
             bets_df["bettor"] = bets_df["bettor"].map(bettor_map).fillna(bets_df["bettor"])
-        
-        # Load risk data (bettor is index)
         try:
             risk_df = pd.read_excel(DATA_DIR / "player_risk_scores.xlsx", sheet_name="All_Players")
             if bettor_map:
                 risk_df.index = risk_df.index.map(lambda x: bettor_map.get(x, x))
         except FileNotFoundError:
             risk_df = None
-        
-        # Load multi-account data
         try:
             multi_df = pd.read_excel(DATA_DIR / "multi_account_detection.xlsx", sheet_name="All_Pairs")
             if bettor_map:
@@ -70,7 +46,6 @@ def load_data():
                 multi_df["Account_2"] = multi_df["Account_2"].map(bettor_map).fillna(multi_df["Account_2"])
         except FileNotFoundError:
             multi_df = None
-        
         return bets_df, risk_df, multi_df
     except Exception as e:
         st.error(f"Error loading data: {e}")
@@ -106,14 +81,11 @@ def generate_pdf(filtered_bets, total_ggr, start_date, end_date, risk_df, multi_
     pdf.cell(0, 8, f"Period: {start_date} to {end_date}", ln=True, align="C")
     pdf.cell(0, 8, f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}", ln=True, align="C")
     pdf.ln(5)
-    
-    # Confidentiality notice
     pdf.set_font("Helvetica", "I", 9)
     pdf.set_text_color(100, 100, 100)
     pdf.cell(0, 6, "CONFIDENTIAL — Bettor IDs anonymized for data protection", ln=True, align="C")
     pdf.set_text_color(0, 0, 0)
     pdf.ln(3)
-    
     if total_ggr < 0:
         pdf.set_font("Helvetica", "B", 12)
         pdf.set_text_color(200, 0, 0)
@@ -175,8 +147,6 @@ st.sidebar.markdown(f"**Total GGR:** ${filtered_bets['usd_ggr'].sum():,.2f}")
 
 if page == "📊 Overview":
     st.title("📊 Risk Management Overview")
-
-    # --- Alert banners ---
     if risk_df is not None:
         critical_count = len(risk_df[risk_df["Risk_Level"] == "CRITICAL"])
         high_count = len(risk_df[risk_df["Risk_Level"] == "HIGH"])
@@ -189,7 +159,6 @@ if page == "📊 Overview":
         if critical_pairs > 0:
             st.error(f"🚨 **MULTI-ACCOUNT ALERT:** {critical_pairs} CRITICAL suspicious pairs detected!")
 
-    # --- Core metrics ---
     total_ggr = filtered_bets["usd_ggr"].sum()
     total_stake = filtered_bets["usd_amount"].sum()
     hold_pct = (total_ggr / total_stake * 100) if total_stake else 0
@@ -198,29 +167,17 @@ if page == "📊 Overview":
     if total_ggr < 0:
         st.error(f"🚨 **NEGATIVE GGR:** House is losing ${abs(total_ggr):,.2f}  (Hold {hold_pct:+.2f}%)")
 
-    # --- KPI row 1: volume ---
     c1, c2, c3 = st.columns(3)
     c1.metric("Total Bets", f"{len(filtered_bets):,}")
     c2.metric("Total Players", f"{filtered_bets['bettor'].nunique():,}")
     c3.metric("Total Stake", f"${total_stake:,.0f}")
 
-    # --- KPI row 2: risk-specific ---
     c4, c5, c6 = st.columns(3)
     c4.metric("Total GGR", f"${total_ggr:,.0f}")
-    c5.metric(
-        "Hold %",
-        f"{hold_pct:+.2f}%",
-        help="GGR / Stake × 100. Negative means the house is losing money.",
-    )
-    c6.metric(
-        "🤖 Bot Suspects",
-        f"{bot_suspects:,}",
-        help="Distinct players who placed ≥2 bets in the exact same second.",
-    )
+    c5.metric("Hold %", f"{hold_pct:+.2f}%", help="GGR / Stake × 100. Negative means the house is losing money.")
+    c6.metric("🤖 Bot Suspects", f"{bot_suspects:,}", help="Distinct players who placed ≥2 bets in the exact same second.")
 
     st.markdown("---")
-
-    # --- GGR daily trend ---
     st.subheader("📉 GGR Trend (Daily)")
     daily = (
         filtered_bets.dropna(subset=["bet_datetime"])
@@ -234,36 +191,25 @@ if page == "📊 Overview":
             x=daily["day"], y=daily["usd_ggr"],
             mode="lines+markers",
             line=dict(width=2, color="#1f77b4"),
-            marker=dict(
-                size=8,
-                color=daily["usd_ggr"],
-                colorscale="RdYlGn",
-                cmin=-max_abs, cmax=max_abs,
-                line=dict(width=1, color="white"),
-            ),
+            marker=dict(size=8, color=daily["usd_ggr"], colorscale="RdYlGn",
+                        cmin=-max_abs, cmax=max_abs, line=dict(width=1, color="white")),
             name="Daily GGR",
             hovertemplate="<b>%{x}</b><br>GGR: $%{y:,.2f}<extra></extra>",
         ))
         fig.add_hline(y=0, line_dash="dash", line_color="gray")
-        fig.update_layout(
-            xaxis_title="Date", yaxis_title="GGR ($)",
-            height=350, margin=dict(l=40, r=20, t=20, b=40),
-            hovermode="x unified",
-        )
+        fig.update_layout(xaxis_title="Date", yaxis_title="GGR ($)",
+                          height=350, margin=dict(l=40, r=20, t=20, b=40), hovermode="x unified")
         st.plotly_chart(fig, use_container_width=True)
     else:
         st.info("No data in selected date range.")
 
     st.markdown("---")
-
-    # --- PDF download ---
     st.subheader("📄 Download PDF Report")
     pdf_bytes = generate_pdf(filtered_bets, total_ggr, start_date, end_date, risk_df, multi_df)
     st.download_button(label="📄 Download PDF Report", data=pdf_bytes,
         file_name=f"risk_summary_{datetime.now().strftime('%Y%m%d')}.pdf", mime="application/pdf")
     st.markdown("---")
 
-    # --- Top risk + Bets by sport (now bar chart instead of pie) ---
     col1, col2 = st.columns(2)
     with col1:
         st.subheader("🎯 Top Risk Players")
@@ -276,19 +222,14 @@ if page == "📊 Overview":
         st.subheader("📊 Bets by Sport")
         sport_counts = filtered_bets["sports"].value_counts().head(10).sort_values()
         fig = go.Figure(go.Bar(
-            x=sport_counts.values, y=sport_counts.index,
-            orientation="h",
+            x=sport_counts.values, y=sport_counts.index, orientation="h",
             marker_color="#1f77b4",
-            text=[f"{v:,}" for v in sport_counts.values],
-            textposition="outside",
+            text=[f"{v:,}" for v in sport_counts.values], textposition="outside",
         ))
-        fig.update_layout(
-            xaxis_title="Bets", yaxis_title="",
-            height=350, margin=dict(l=20, r=60, t=20, b=40),
-        )
+        fig.update_layout(xaxis_title="Bets", yaxis_title="",
+                          height=350, margin=dict(l=20, r=60, t=20, b=40))
         st.plotly_chart(fig, use_container_width=True)
 
-    # --- GGR by sport ---
     st.subheader("💰 GGR by Sport")
     sport_ggr = filtered_bets.groupby("sports")["usd_ggr"].sum().sort_values(ascending=True).tail(10)
     max_abs_sport = max(abs(sport_ggr.min()), abs(sport_ggr.max()), 1)
@@ -320,7 +261,8 @@ elif page == "🔍 Player Risk":
     col1, col2 = st.columns(2)
     with col1:
         risk_counts = filtered_df["Risk_Level"].value_counts()
-        colors_map = {"CRITICAL": "#ff4444", "HIGH": "#ff8800", "MEDIUM": "#ffcc00", "LOW": "#44cc44", "MINIMAL": "#aaaaaa"}
+        colors_map = {"CRITICAL": "#ff4444", "HIGH": "#ff8800", "MEDIUM": "#ffcc00",
+                      "LOW": "#44cc44", "MINIMAL": "#aaaaaa"}
         bar_colors = [colors_map.get(l, "#888") for l in risk_counts.index]
         fig = go.Figure(go.Bar(x=risk_counts.index, y=risk_counts.values, marker_color=bar_colors))
         st.plotly_chart(fig, use_container_width=True)
