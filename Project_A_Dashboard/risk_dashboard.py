@@ -1,5 +1,6 @@
 from pathlib import Path
 from datetime import datetime
+import io
 
 import streamlit as st
 import pandas as pd
@@ -9,19 +10,17 @@ from fpdf import FPDF
 
 st.set_page_config(page_title="Betting Risk Dashboard", page_icon="⚠️", layout="wide")
 
-# Paths relative to this script — works on any machine
 SCRIPT_DIR = Path(__file__).parent
 DATA_DIR = SCRIPT_DIR / "sample_data"
 
 
 @st.cache_data
 def load_bettor_mapping():
-    """Load anonymization mapping from private file."""
     try:
         mapping_df = pd.read_excel(DATA_DIR / "bettor_mapping_PRIVATE.xlsx")
         return dict(zip(mapping_df["Original_Wallet"], mapping_df["Anonymous_ID"]))
     except FileNotFoundError:
-        st.warning("⚠️ bettor_mapping_PRIVATE.xlsx not found — bettors will show as-is")
+        st.warning("⚠️ bettor_mapping_PRIVATE.xlsx not found - bettors will show as-is")
         return {}
 
 
@@ -54,7 +53,6 @@ def load_data():
 
 @st.cache_data
 def compute_bot_suspects(df):
-    """Count distinct bettors who placed >=2 bets in the exact same second."""
     d = df.dropna(subset=["bet_datetime"]).copy()
     d["sec"] = d["bet_datetime"].dt.floor("s")
     counts = d.groupby(["bettor", "sec"]).size()
@@ -174,8 +172,8 @@ if page == "📊 Overview":
 
     c4, c5, c6 = st.columns(3)
     c4.metric("Total GGR", f"${total_ggr:,.0f}")
-    c5.metric("Hold %", f"{hold_pct:+.2f}%", help="GGR / Stake × 100. Negative means the house is losing money.")
-    c6.metric("🤖 Bot Suspects", f"{bot_suspects:,}", help="Distinct players who placed ≥2 bets in the exact same second.")
+    c5.metric("Hold %", f"{hold_pct:+.2f}%")
+    c6.metric("🤖 Bot Suspects", f"{bot_suspects:,}")
 
     st.markdown("---")
     st.subheader("📉 GGR Trend (Daily)")
@@ -188,17 +186,15 @@ if page == "📊 Overview":
         max_abs = max(abs(daily["usd_ggr"].min()), abs(daily["usd_ggr"].max()), 1)
         fig = go.Figure()
         fig.add_trace(go.Scatter(
-            x=daily["day"], y=daily["usd_ggr"],
-            mode="lines+markers",
+            x=daily["day"], y=daily["usd_ggr"], mode="lines+markers",
             line=dict(width=2, color="#1f77b4"),
             marker=dict(size=8, color=daily["usd_ggr"], colorscale="RdYlGn",
                         cmin=-max_abs, cmax=max_abs, line=dict(width=1, color="white")),
             name="Daily GGR",
-            hovertemplate="<b>%{x}</b><br>GGR: $%{y:,.2f}<extra></extra>",
         ))
         fig.add_hline(y=0, line_dash="dash", line_color="gray")
         fig.update_layout(xaxis_title="Date", yaxis_title="GGR ($)",
-                          height=350, margin=dict(l=40, r=20, t=20, b=40), hovermode="x unified")
+                          height=350, margin=dict(l=40, r=20, t=20, b=40))
         st.plotly_chart(fig, use_container_width=True)
     else:
         st.info("No data in selected date range.")
@@ -272,13 +268,15 @@ elif page == "🔍 Player Risk":
         st.metric("Total GGR", f"${filtered_df['GGR'].sum():,.2f}")
     display_cols = ["Bets", "Total_Stake", "GGR", "Avg_CLV", "Win_Rate", "Risk_Score", "Risk_Level"]
     st.dataframe(filtered_df[display_cols].style.map(color_risk, subset=["Risk_Level"]), use_container_width=True)
-    import io
-buf = io.BytesIO()
-filtered_df[display_cols].to_excel(buf, index=True)
-buf.seek(0)
-st.download_button(label="📥 Download Player Data as Excel", data=buf,
-    file_name=f"player_risk_{datetime.now().strftime('%Y%m%d')}.xlsx",
-    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    buf = io.BytesIO()
+    filtered_df[display_cols].to_excel(buf, index=True)
+    buf.seek(0)
+    st.download_button(
+        label="📥 Download Player Data as Excel",
+        data=buf,
+        file_name=f"player_risk_{datetime.now().strftime('%Y%m%d')}.xlsx",
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
 
 elif page == "⚠️ Multi-Account Alerts":
     st.title("⚠️ Multi-Account Detection")
@@ -299,11 +297,14 @@ elif page == "⚠️ Multi-Account Alerts":
     display_cols = ["Account_1", "Account_2", "Similarity_Score", "Sport_Sim", "Time_Sim", "Stake_Sim", "Risk_Level"]
     st.dataframe(display_df[display_cols].head(20).style.map(color_risk, subset=["Risk_Level"]), use_container_width=True)
     buf2 = io.BytesIO()
-display_df[display_cols].to_excel(buf2, index=False)
-buf2.seek(0)
-st.download_button(label="📥 Download Suspicious Pairs as Excel", data=buf2,
-    file_name=f"multi_account_{datetime.now().strftime('%Y%m%d')}.xlsx",
-    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    display_df[display_cols].to_excel(buf2, index=False)
+    buf2.seek(0)
+    st.download_button(
+        label="📥 Download Suspicious Pairs as Excel",
+        data=buf2,
+        file_name=f"multi_account_{datetime.now().strftime('%Y%m%d')}.xlsx",
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
     fig = px.histogram(display_df, x="Similarity_Score", nbins=50)
     st.plotly_chart(fig, use_container_width=True)
 
