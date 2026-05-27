@@ -4,7 +4,7 @@ from datetime import datetime
 import streamlit as st
 import pandas as pd
 import plotly.express as px# Navigate to your local repo
-cd C:\Users\7777\RiskManagement_Portfolio
+#cd C:\Users\7777\RiskManagement_Portfolio
 
 # Check status
 git status
