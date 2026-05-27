@@ -83,7 +83,7 @@ def generate_pdf(filtered_bets, total_ggr, start_date, end_date, risk_df, multi_
     pdf.ln(5)
     pdf.set_font("Helvetica", "I", 9)
     pdf.set_text_color(100, 100, 100)
-    pdf.cell(0, 6, "CONFIDENTIAL — Bettor IDs anonymized for data protection", ln=True, align="C")
+    pdf.cell(0, 6, "CONFIDENTIAL - Bettor IDs anonymized for data protection", ln=True, align="C")
     pdf.set_text_color(0, 0, 0)
     pdf.ln(3)
     if total_ggr < 0:
