@@ -8,10 +8,10 @@
 [**Open Interactive Risk Dashboard →**](https://riskmanagementportfolio-hkdaavgx3tsjvuzyrutvng.streamlit.app/)
 
 Live deployed Streamlit app showing real-time risk monitoring, ML-based bot detection, and multi-account similarity alerts on 4,138 anonymized betting transactions.
----
-## 🎥 Video Demo
-<img width="282" height="264" alt="image" src="https://github.com/user-attachments/assets/57e2c314-6047-431a-9df4-3d5a3dd478cf" />
 
+---
+
+## 🎥 Video Demo
 
 [▶️ Watch 2‑minute dashboard walkthrough on Loom](https://www.loom.com/share/c772edb48a4d4679939865a8c653eadf)
 
