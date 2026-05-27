@@ -7,7 +7,6 @@ import plotly.express as px# Navigate to your local repo
 #cd C:\Users\7777\RiskManagement_Portfolio
 
 # Check status
-git status
 
 # Copy the new file (replace old one)
 copy "C:\Users\7777\Downloads\risk_dashboard.py" "Project_A_Dashboard\risk_dashboard.py"
