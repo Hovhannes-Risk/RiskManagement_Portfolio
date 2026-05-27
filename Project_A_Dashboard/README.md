@@ -1,5 +1,10 @@
 # Project A — Interactive Risk Dashboard
 
+## 🚀 Live Demo
+
+[**Open Interactive Risk Dashboard →**](https://riskmanagementportfolio-hkdaavgx3tsjvuzyrutvng.streamlit.app/)
+
+Live deployed Streamlit app showing real-time risk monitoring, ML-based bot detection, and multi-account similarity alerts on 4,138 anonymized betting transactions.
 *Streamlit multi-page dashboard. Surveillance layer for the risk desk:
 KPIs at a glance, drill-down to player level, one-click PDF export.*
 
