@@ -9,6 +9,8 @@
 
 Live deployed Streamlit app showing real-time risk monitoring, ML-based bot detection, and multi-account similarity alerts on 4,138 anonymized betting transactions.
 
+![Dashboard Overview](Project_A_Dashboard/screenshots/dashboard_overview.png)
+
 ---
 
 ## 🎥 Video Demo
