@@ -272,9 +272,13 @@ elif page == "🔍 Player Risk":
         st.metric("Total GGR", f"${filtered_df['GGR'].sum():,.2f}")
     display_cols = ["Bets", "Total_Stake", "GGR", "Avg_CLV", "Win_Rate", "Risk_Score", "Risk_Level"]
     st.dataframe(filtered_df[display_cols].style.map(color_risk, subset=["Risk_Level"]), use_container_width=True)
-    csv = filtered_df[display_cols].to_csv(index=True).encode("utf-8")
-    st.download_button(label="📥 Download Player Data as CSV", data=csv,
-        file_name=f"player_risk_{datetime.now().strftime('%Y%m%d')}.csv", mime="text/csv")
+    import io
+buf = io.BytesIO()
+filtered_df[display_cols].to_excel(buf, index=True)
+buf.seek(0)
+st.download_button(label="📥 Download Player Data as Excel", data=buf,
+    file_name=f"player_risk_{datetime.now().strftime('%Y%m%d')}.xlsx",
+    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
 elif page == "⚠️ Multi-Account Alerts":
     st.title("⚠️ Multi-Account Detection")
@@ -294,9 +298,12 @@ elif page == "⚠️ Multi-Account Alerts":
     display_df = multi_df if risk_filter == "ALL" else multi_df[multi_df["Risk_Level"] == risk_filter]
     display_cols = ["Account_1", "Account_2", "Similarity_Score", "Sport_Sim", "Time_Sim", "Stake_Sim", "Risk_Level"]
     st.dataframe(display_df[display_cols].head(20).style.map(color_risk, subset=["Risk_Level"]), use_container_width=True)
-    csv = display_df[display_cols].to_csv(index=False).encode("utf-8")
-    st.download_button(label="📥 Download Suspicious Pairs as CSV", data=csv,
-        file_name=f"multi_account_{datetime.now().strftime('%Y%m%d')}.csv", mime="text/csv")
+    buf2 = io.BytesIO()
+display_df[display_cols].to_excel(buf2, index=False)
+buf2.seek(0)
+st.download_button(label="📥 Download Suspicious Pairs as Excel", data=buf2,
+    file_name=f"multi_account_{datetime.now().strftime('%Y%m%d')}.xlsx",
+    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
     fig = px.histogram(display_df, x="Similarity_Score", nbins=50)
     st.plotly_chart(fig, use_container_width=True)
 
