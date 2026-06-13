@@ -18,7 +18,8 @@ https://riskmanagementportfolio-hkdaavgx3tsjvuzyrutvng.streamlit.app/
 
 ## 🎥 Video Demo
 
-[▶️ Watch 2‑minute dashboard walkthrough on Loom](https://www.loom.com/share/c772edb48a4d4679939865a8c653eadf)
+<img width="1000" height="380" alt="dashboard_demo" src="https://github.com/user-attachments/assets/41fdbee5-c7c6-4d71-9f85-5962b33d1b46" />
+
 
 Quick tour of real‑time risk monitoring, bot detection, and PDF reporting.
 
