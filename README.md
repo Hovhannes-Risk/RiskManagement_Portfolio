@@ -7,7 +7,7 @@
 
 ## 🚀 Live Demo
 hovhannes-risk-dashboard
-
+https://riskmanagementportfolio-hkdaavgx3tsjvuzyrutvng.streamlit.app/
 
 
 <img width="1904" height="624" alt="01_overview" src="https://github.com/user-attachments/assets/f71f5d32-346b-4dbf-9561-b26a5e32f0fc" />
