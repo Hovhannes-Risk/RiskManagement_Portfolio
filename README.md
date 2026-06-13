@@ -7,11 +7,10 @@
 
 ## 🚀 Live Demo
 
-[**Open Interactive Risk Dashboard →**](https://riskmanagementportfolio-hkdaavgx3tsjvuzyrutvng.streamlit.app/)
+<img width="1904" height="624" alt="01_overview" src="https://github.com/user-attachments/assets/f71f5d32-346b-4dbf-9561-b26a5e32f0fc" />
+<img width="1904" height="632" alt="02_risk_charts" src="https://github.com/user-attachments/assets/8b2706fa-724e-4822-8cc6-cbc7d41cd7a3" />
+<img width="1908" height="726" alt="03_player_risk" src="https://github.com/user-attachments/assets/30128411-3d22-4969-bb54-bfd8db40b215" />
 
-Live deployed Streamlit app showing real-time risk monitoring, ML-based bot detection, and multi-account similarity alerts on a 4,319-bet synthetic trading day.
-
-![Risk Dashboard — Overview](Project_A_Dashboard/screenshots/01_overview.png)
 
 
 ---
