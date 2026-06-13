@@ -9,13 +9,15 @@ Live deployed Streamlit app showing real-time risk monitoring, ML-based bot dete
 KPIs at a glance, drill-down to player level, one-click PDF export.*
 
 ## Screenshots
-<img width="1904" height="624" alt="01_overview" src="https://github.com/user-attachments/assets/4f542ee9-f775-4452-92df-b1f01564cd39" />
+<img width="1904" height="624" alt="01_overview" src="https://github.com/user-attachments/assets/b0b48bdb-2917-45e6-85e9-24dc683a07aa" />
 
 
-<img width="1904" height="632" alt="02_risk_charts" src="https://github.com/user-attachments/assets/342a553b-b268-46e4-9ee2-d80ad0fc88cb" />
+
+<img width="1904" height="632" alt="02_risk_charts" src="https://github.com/user-attachments/assets/13bb2bdd-030f-440c-bf45-5ab83cb15707" />
 
 
-<img width="1908" height="726" alt="03_player_risk" src="https://github.com/user-attachments/assets/77050efb-7cf4-4d24-9364-6b47d7d4dfd5" />
+
+<img width="1908" height="726" alt="03_player_risk" src="https://github.com/user-attachments/assets/f9d6492d-468e-4678-9d06-1b8553965454" />
 
 
 ---
