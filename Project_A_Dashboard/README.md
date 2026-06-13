@@ -9,12 +9,14 @@ Live deployed Streamlit app showing real-time risk monitoring, ML-based bot dete
 KPIs at a glance, drill-down to player level, one-click PDF export.*
 
 ## Screenshots
+<img width="1904" height="624" alt="01_overview" src="https://github.com/user-attachments/assets/4f542ee9-f775-4452-92df-b1f01564cd39" />
 
-![Overview — KPI strip and live alerts](screenshots/01_overview.png)
 
-![Risk charts — top risk players, bets and GGR by sport](screenshots/02_risk_charts.png)
+<img width="1904" height="632" alt="02_risk_charts" src="https://github.com/user-attachments/assets/342a553b-b268-46e4-9ee2-d80ad0fc88cb" />
 
-![Player Risk Analysis — risk-band distribution and drill-down](screenshots/03_player_risk.png)
+
+<img width="1908" height="726" alt="03_player_risk" src="https://github.com/user-attachments/assets/77050efb-7cf4-4d24-9364-6b47d7d4dfd5" />
+
 
 ---
 
