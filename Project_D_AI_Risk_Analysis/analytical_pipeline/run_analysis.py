@@ -198,20 +198,24 @@ bot_suspect_n = len(bot_suspect_accounts)
 
 # Behavioral fingerprint candidates — players with same sport-mix + time-of-day pattern
 # (Layer-2 lightweight version; full clustering is left to Project B's ML pipeline)
-def hour_histogram(sub):
-    hours = sub["bet_time"].dt.hour
-    return tuple(sub["sports"].value_counts(normalize=True).round(2).to_dict().get(s, 0)
-                 for s in sorted(df["sports"].unique())), tuple(hours.value_counts(normalize=True).round(2).to_dict().get(h, 0) for h in range(24))
+#
+# Vectorized via crosstab instead of a per-bettor Python loop: a naive
+# implementation recomputes df["sports"].unique() and two value_counts()
+# calls once per bettor (12,208x on the full dataset), which is O(n) work
+# repeated n times -> ~3 minutes. The crosstab below computes every
+# bettor's sport-mix and hour-mix vectors in one vectorized pass (~2-3s).
+bet_counts = df.groupby("bettor").size()
+eligible = bet_counts[bet_counts >= 5].index
 
-# Behavioral matches: count players sharing identical (sport_vec, hour_vec) at coarse rounding
-buckets = {}
-for bettor, sub in df.groupby("bettor"):
-    if len(sub) < 5:
-        continue
-    sv, hv = hour_histogram(sub)
-    key = (sv, hv)
-    buckets.setdefault(key, []).append(bettor)
-behavioral_clusters = [b for b in buckets.values() if len(b) >= 2]
+sport_mix = pd.crosstab(df["bettor"], df["sports"], normalize="index").round(2).loc[eligible]
+hour_mix = pd.crosstab(df["bettor"], df["bet_time"].dt.hour, normalize="index").round(2).loc[eligible]
+
+fingerprints = pd.Series(
+    list(zip(map(tuple, sport_mix.to_numpy()), map(tuple, hour_mix.to_numpy()))),
+    index=eligible,
+)
+buckets = fingerprints.groupby(fingerprints).groups  # fingerprint -> Index of bettors
+behavioral_clusters = [list(idx) for key, idx in buckets.items() if len(idx) >= 2]
 behavioral_match_pairs = sum(len(b) * (len(b) - 1) // 2 for b in behavioral_clusters)
 
 
