@@ -142,10 +142,41 @@ It is a complete, honest, reproducible demonstration of one human-AI hybrid risk
 |---|---|
 | Data | pandas · openpyxl |
 | Stats | numpy · scipy (Wilson CI) |
-| LLM | model-agnostic; prompts validated on Claude / GPT class frontier models |
+| LLM | designed to be model-agnostic — prompts avoid model-specific API quirks and rely only on general instruction-following, so they should transfer across current frontier models (this report was generated with Claude) |
 | Reporting | Markdown |
 | Discipline | the prompt chain in `prompts/` |
 | Judgment | the override layer in `human_validation/` |
+
+---
+
+## Roadmap — production architecture
+
+The deliberate scope of this portfolio is the *workflow and the judgment*,
+not a deployable system. Two extensions are the obvious next steps in a
+production setting, and are documented here as design intent rather than
+half-built features (a broken interactive demo would be weaker than a
+clear statement of where the system goes next):
+
+**Interactive review queue.** The override layer is currently a structured
+markdown log (`human_validation/action_override_log.md`). In production
+this becomes an interactive review queue: each AI recommendation surfaces
+in a dashboard with **Approve / Modify / Reject** controls, writing the
+decision and its rationale to an append-only audit table. This serves two
+purposes at once — a compliance-grade audit trail (who decided what, when,
+and why), and a **weak-label feedback dataset**: every human decision
+becomes a precision signal for the otherwise-unsupervised detectors,
+turning the override log into training data over time.
+
+**One-command generation, with the human gate intact.** The LLM step is
+currently run manually so the prompts stay inspectable and every draft
+passes human review before it ships. Automating it (a `generate_report.py`
+calling the model API) is a small addition — but the generated report must
+land in the review queue above, *not* directly become the final report.
+The accept-vs-override discipline that defines this project depends on the
+human gate staying in the loop; automation removes typing, not judgment.
+
+Both extensions keep the core principle unchanged: **the AI does no
+arithmetic, and a human remains the gating function.**
 
 ---
 
