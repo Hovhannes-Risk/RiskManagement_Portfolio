@@ -6,7 +6,9 @@
 *Hovhannes Asatryan — 15 years industry experience (Live Trader → Live Manager → Risk Manager)*
 
 ## 🚀 Live Demo
-https://riskmanagementportfolio-hkdaavgx3tsjvuzyrutvng.streamlit.app/
+hovhannes-risk-dashboard
+
+
 
 <img width="1904" height="624" alt="01_overview" src="https://github.com/user-attachments/assets/f71f5d32-346b-4dbf-9561-b26a5e32f0fc" />
 <img width="1904" height="632" alt="02_risk_charts" src="https://github.com/user-attachments/assets/8b2706fa-724e-4822-8cc6-cbc7d41cd7a3" />
